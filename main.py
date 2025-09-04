@@ -121,7 +121,7 @@ async def main():
 
             # 👉 Botão de download 1
             async with page.expect_download() as download_info:
-                await page.locator('xpath=/html[1]/body[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[2]/span[1]/div[1]/div[1]').click()
+                await page.locator('xpath=/html/body/div[1]/div/div[2]/div[1]/div[2]/div[2]/span/div/div').click()
                 await page.wait_for_timeout(8000)
                 await page.get_by_role("button", name="Baixar").nth(0).click()
             download = await download_info.value
@@ -142,7 +142,7 @@ async def main():
 
             # 👉 Botão de download 2
             async with page.expect_download() as download_info:
-            await page.locator('xpath=/html[1]/body[1]/div[1]/div[1]/div[2]/div[1]/div[2]/div[2]/span[1]/div[1]/div[1]').click()
+            await page.locator('xpath=/html/body/div[1]/div/div[2]/div[1]/div[2]/div[2]/span/div/div').click()
             await page.wait_for_timeout(8000)
             await page.get_by_role("button", name="Baixar").nth(0).click()
             download = await download_info.value
