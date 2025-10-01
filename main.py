@@ -132,7 +132,7 @@ async def main():
             await page.goto("https://spx.shopee.com.br/#/hubLinehaulTrips/trip")
             await page.wait_for_timeout(8000)
             await page.locator(
-                'xpath=/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/span[1]'
+                'xpath=//html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/span[1]'
             ).click()
             await page.wait_for_timeout(8000)
             await page.get_by_role("button", name="Exportar").nth(0).click()
