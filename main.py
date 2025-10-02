@@ -114,7 +114,7 @@ async def main():
             await page.goto("https://spx.shopee.com.br/#/hubLinehaulTrips/trip")
             await page.wait_for_timeout(8000)
             await page.get_by_role("button", name="Exportar").nth(0).click()
-            await page.wait_for_timeout(15000)
+            await page.wait_for_timeout(10000)
 
             # 👉 Botão de download 1
             await page.goto("https://spx.shopee.com.br/#/taskCenter/exportTaskCenter")
@@ -136,7 +136,7 @@ async def main():
             ).click()
             await page.wait_for_timeout(8000)
             await page.get_by_role("button", name="Exportar").nth(0).click()
-            await page.wait_for_timeout(15000)
+            await page.wait_for_timeout(10000)
 
             # 👉 Botão de download 2
             await page.goto("https://spx.shopee.com.br/#/taskCenter/exportTaskCenter")
