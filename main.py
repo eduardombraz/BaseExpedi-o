@@ -98,7 +98,7 @@ async def main():
             # LOGIN
             await page.goto("https://spx.shopee.com.br/")
             await page.wait_for_selector('xpath=//*[@placeholder="Ops ID"]', timeout=15000)
-            await page.locator('xpath=//*[@placeholder="Ops ID"]').fill('Ops115950')
+            await page.locator('xpath=//*[@placeholder="Ops ID"]').fill('Ops113074')
             await page.locator('xpath=//*[@placeholder="Senha"]').fill('@Shopee123')
             await page.locator(
                 'xpath=/html/body/div[1]/div/div[2]/div/div/div[1]/div[3]/form/div/div/button'
@@ -114,7 +114,7 @@ async def main():
             await page.goto("https://spx.shopee.com.br/#/hubLinehaulTrips/trip")
             await page.wait_for_timeout(8000)
             await page.get_by_role("button", name="Exportar").nth(0).click()
-            await page.wait_for_timeout(12000)
+            await page.wait_for_timeout(10000)
 
             # 👉 Botão de download 1
             await page.goto("https://spx.shopee.com.br/#/taskCenter/exportTaskCenter")
@@ -132,11 +132,11 @@ async def main():
             await page.goto("https://spx.shopee.com.br/#/hubLinehaulTrips/trip")
             await page.wait_for_timeout(8000)
             await page.locator(
-                'xpath=//html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/span[1]'
+                'xpath=/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/span[1]'
             ).click()
             await page.wait_for_timeout(8000)
             await page.get_by_role("button", name="Exportar").nth(0).click()
-            await page.wait_for_timeout(12000)
+            await page.wait_for_timeout(10000)
 
             # 👉 Botão de download 2
             await page.goto("https://spx.shopee.com.br/#/taskCenter/exportTaskCenter")
