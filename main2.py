@@ -120,8 +120,8 @@ async def main():
             await page.wait_for_timeout(8000) 
             
             # Clicando no filtro específico para "Pending" (ajuste o seletor se necessário)
-            await page.locator('xpath=/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]').click()
-            await page.wait_for_timeout(5000)
+            # await page.locator('xpath=/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]').click()
+            # await page.wait_for_timeout(5000)
             await page.get_by_role("button", name="Exportar").nth(0).click()
             await page.wait_for_timeout(10000)
 
