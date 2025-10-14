@@ -170,7 +170,7 @@ async def main():
             await page.wait_for_timeout(8000)  
   
             # Exporta  
-            await page.get_by_role("button", name="Exportar").nth(0).click()  
+                await page.get_by_role("button", name="Baixar").nth(0).click()    
             await page.wait_for_timeout(10000)  
   
             # Vai para a página de exportação  
