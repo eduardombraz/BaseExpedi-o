@@ -106,13 +106,15 @@ async def main():
     ensure_download_dir()  
   
     async with async_playwright() as p:  
-        # Inicia navegador  
+        # Inicia navegador com headless=True (para xvfb-run)  
         browser = await p.chromium.launch(  
-            headless=False,  
+            headless=True,  # ✅ Roda em modo headless (ideal para xvfb-run)  
             args=[  
                 "--no-sandbox",  
                 "--disable-dev-shm-usage",  
-                "--window-size=1920,1080"  
+                "--window-size=1920,1080",  
+                "--disable-gpu",  
+                "--disable-software-rasterizer"  
             ]  
         )  
         context = await browser.new_context(accept_downloads=True)  
@@ -152,6 +154,10 @@ async def main():
             await page.goto(TASK_CENTER_URL, timeout=20000)  
             await page.wait_for_load_state("networkidle")  
             await page.wait_for_timeout(8000)  
+  
+            # ✅ Espera dinâmica: Aguarda o botão "Baixar" aparecer no DOM  
+            print("⏳ Esperando o botão 'Baixar' aparecer...")  
+            await page.wait_for_selector('button[title="Baixar"]', timeout=20000)  
   
             # ✅ Clique FORÇADO via JavaScript (burla o React)  
             async with page.expect_download() as download_info:  
@@ -194,7 +200,11 @@ async def main():
             await page.wait_for_load_state("networkidle")  
             await page.wait_for_timeout(8000)  
   
-            # ✅ Clique FORÇADO via JavaScript (burla o React)  
+            # ✅ Espera dinâmica: Aguarda o botão "Baixar" aparecer no DOM  
+            print("⏳ Esperando o botão 'Baixar' aparecer...")  
+            await page.wait_for_selector('button[title="Baixar"]', timeout=20000)  
+  
+            # ✅ Clique FORÇADO via JavaScript  
             async with page.expect_download() as download_info:  
                 await page.evaluate("""() => {  
                     const button = document.querySelector('button[title="Baixar"]');  
