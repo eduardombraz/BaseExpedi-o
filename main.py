@@ -87,9 +87,12 @@ def update_google_sheet(sheet_name: str, csv_file_path: str):
         # Lê o CSV e preenche valores vazios  
         df = pd.read_csv(csv_file_path).fillna("")  
   
-        # Limpa e atualiza  
+        # ✅ Correção: Use named arguments (evita warning)  
         worksheet.clear()  
-        worksheet.update([df.columns.values.tolist()] + df.values.tolist())  
+        worksheet.update(  
+            values=[df.columns.values.tolist()] + df.values.tolist(),  
+            range_name=""  # Opcional, mas necessário para evitar warning  
+        )  
   
         print(f"✅ Dados enviados para '{sheet_name}' com sucesso.")  
   
@@ -97,7 +100,7 @@ def update_google_sheet(sheet_name: str, csv_file_path: str):
         print(f"❌ Erro ao atualizar '{sheet_name}': {e}")  
   
 # ==============================  
-# Fluxo Principal (Playwright)  
+# Fluxo Principal (Playwright) - CORRIGIDO  
 # ==============================  
 async def main():  
     ensure_download_dir()  
@@ -114,6 +117,9 @@ async def main():
         )  
         context = await browser.new_context(accept_downloads=True)  
         page = await context.new_page()  
+  
+        # 🔍 DEBUG: Captura logs do console (JS)  
+        page.on("console", lambda msg: print(f"📄 Console: {msg.text}"))  
   
         try:  
             # 1. LOGIN  
@@ -136,24 +142,29 @@ async def main():
             # 2. DOWNLOAD 1: Base Pending  
             print("📥 Baixando 'Base Pending'...")  
             await page.goto(EXPORT_URL, timeout=20000)  
+            await page.wait_for_load_state("networkidle")  # Espera carregamento completo  
             await page.wait_for_timeout(8000)  
   
             # Clica no botão Exportar  
-            await page.get_by_role("button", name="Exportar").nth(0).click()  
+            await page.get_by_role("button", name="Exportar").nth(0).click(timeout=30000)  
             await page.wait_for_timeout(10000)  
   
             # Vai para a página de exportação  
             await page.goto(TASK_CENTER_URL, timeout=20000)  
+            await page.wait_for_load_state("networkidle")  
             await page.wait_for_timeout(8000)  
   
             # Espera o download  
             async with page.expect_download() as download_info:  
-                await page.get_by_role("button", name="Baixar").nth(0).click()  
+                # ✅ FORÇA O CLIQUE com force=True  
+                await page.get_by_role("button", name="Baixar").nth(0).click(  
+                    timeout=30000,  
+                    force=True  # 👈 Chave: Força o clique mesmo se bloqueado  
+                )  
             download = await download_info.value  
             download_path = os.path.join(DOWNLOAD_DIR, download.suggested_filename)  
             await download.save_as(download_path)  
   
-            # Renomeia  
             new_file_path = rename_downloaded_file(DOWNLOAD_DIR, download_path, "PROD")  
             if new_file_path:  
                 update_google_sheet("Base Pending", new_file_path)  
@@ -161,30 +172,34 @@ async def main():
             # 3. DOWNLOAD 2: Base Handedover  
             print("📥 Baixando 'Base Handedover'...")  
             await page.goto(EXPORT_URL, timeout=20000)  
+            await page.wait_for_load_state("networkidle")  
             await page.wait_for_timeout(8000)  
   
-            # Clica no filtro (ex: "Trip Status" ou outro)  
+            # Clica no filtro (ex: "Trip Status")  
             await page.locator(  
                 'xpath=/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/span[1]'  
-            ).click()  
+            ).click(timeout=15000)  
             await page.wait_for_timeout(8000)  
   
             # Exporta  
-                await page.get_by_role("button", name="Baixar").nth(0).click()    
+            await page.get_by_role("button", name="Exportar").nth(0).click(timeout=30000)  
             await page.wait_for_timeout(10000)  
   
             # Vai para a página de exportação  
             await page.goto(TASK_CENTER_URL, timeout=20000)  
+            await page.wait_for_load_state("networkidle")  
             await page.wait_for_timeout(8000)  
   
             # Espera o download  
             async with page.expect_download() as download_info:  
-                await page.get_by_role("button", name="Baixar").nth(0).click()  
+                await page.get_by_role("button", name="Baixar").nth(0).click(  
+                    timeout=30000,  
+                    force=True  # 👈 Chave: Força o clique  
+                )  
             download2 = await download_info.value  
             download_path2 = os.path.join(DOWNLOAD_DIR, download2.suggested_filename)  
             await download2.save_as(download_path2)  
   
-            # Renomeia  
             new_file_path2 = rename_downloaded_file(DOWNLOAD_DIR, download_path2, "WS")  
             if new_file_path2:  
                 update_google_sheet("Base Handedover", new_file_path2)  
@@ -201,4 +216,4 @@ async def main():
 # EXECUÇÃO  
 # ==============================  
 if __name__ == "__main__":  
-    asyncio.run(main())
+    asyncio.run(main())  
