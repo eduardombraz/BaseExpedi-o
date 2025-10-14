@@ -139,7 +139,7 @@ async def main():
             # Usando a função unificada
             new_file_path = rename_downloaded_file(DOWNLOAD_DIR, download_path)
             if new_file_path:
-                update_google_sheet(new_file_path)
+                update_packing_google_sheets(new_file_path)
 
             # ================== DOWNLOAD 2: HANDEDOVER ==================
             print("\nIniciando Download 2: Base Handedover")
@@ -166,7 +166,7 @@ async def main():
             # Usando a função unificada
             new_file_path2 = rename_downloaded_file2(DOWNLOAD_DIR, download_path2)
             if new_file_path2:
-                update_google_sheet(new_file_path2)
+                update_packing_google_sheets2(new_file_path2)
 
             print("\n✅ Processo concluído com sucesso.")
 
