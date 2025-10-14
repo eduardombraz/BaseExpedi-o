@@ -150,10 +150,10 @@ async def main():
             await page.locator('xpath=/html[1]/body[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[3]/span[1]').click()
             await page.wait_for_timeout(5000)
             await page.get_by_role("button", name="Exportar").nth(0).click()
-            await page.wait_for_timeout(10000)
+            await page.wait_for_timeout(20000)
 
             await page.goto("https://spx.shopee.com.br/#/taskCenter/exportTaskCenter")
-            await page.wait_for_timeout(8000)
+            await page.wait_for_timeout(20000)
 
             async with page.expect_download() as download_info2: # Use uma nova variável para clareza
                 # Clica no botão mais recente, que deve ser o da segunda exportação
