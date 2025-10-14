@@ -137,9 +137,9 @@ async def main():
             await download.save_as(download_path)
 
             # Usando a função unificada
-            new_file_path = rename_downloaded_file(DOWNLOAD_DIR, download_path, "PEND")
+            new_file_path = rename_downloaded_file(DOWNLOAD_DIR, download_path)
             if new_file_path:
-                update_google_sheet(new_file_path, "Base Pending")
+                update_google_sheet(new_file_path)
 
             # ================== DOWNLOAD 2: HANDEDOVER ==================
             print("\nIniciando Download 2: Base Handedover")
@@ -164,9 +164,9 @@ async def main():
             await download2.save_as(download_path2)
             
             # Usando a função unificada
-            new_file_path2 = rename_downloaded_file(DOWNLOAD_DIR, download_path2, "PROD")
+            new_file_path2 = rename_downloaded_file2(DOWNLOAD_DIR, download_path2)
             if new_file_path2:
-                update_google_sheet(new_file_path2, "Base Handedover")
+                update_google_sheet(new_file_path2)
 
             print("\n✅ Processo concluído com sucesso.")
 
