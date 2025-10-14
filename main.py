@@ -102,43 +102,51 @@ def update_google_sheet(sheet_name: str, csv_file_path: str):
 # ==============================  
 # Fluxo Principal (Playwright) - CORRIGIDO  
 # ==============================  
-async def main():  
-    ensure_download_dir()  
-  
-    async with async_playwright() as p:  
-        # Inicia navegador com headless=True (para xvfb-run)  
-        browser = await p.chromium.launch(  
-            headless=True,  # ✅ Roda em modo headless (ideal para xvfb-run)  
-            args=[  
-                "--no-sandbox",  
-                "--disable-dev-shm-usage",  
-                "--window-size=1920,1080",  
-                "--disable-gpu",  
-                "--disable-software-rasterizer"  
-            ]  
-        )  
-        context = await browser.new_context(accept_downloads=True)  
-        page = await context.new_page()  
-  
-        # 🔍 DEBUG: Captura logs do console (JS)  
-        page.on("console", lambda msg: print(f"📄 Console: {msg.text}"))  
-  
-        try:  
-            # 1. LOGIN  
-            print("🔐 Acessando página de login...")  
-            await page.goto(LOGIN_URL, timeout=30000)  
-            await page.wait_for_selector('xpath=//*[@placeholder="Ops ID"]', timeout=15000)  
-  
-            await page.fill('xpath=//*[@placeholder="Ops ID"]', LOGIN_DATA["ops_id"])  
-            await page.fill('xpath=//*[@placeholder="Senha"]', LOGIN_DATA["password"])  
-            await page.click('xpath=/html/body/div[1]/div/div[2]/div/div/div[1]/div[3]/form/div/div/button')  
-            await page.wait_for_timeout(15000)  
-  
-            try:  
-                await page.locator('.ssc-dialog-close').click(timeout=5000)  
-            except:  
-                print("💡 Nenhum pop-up encontrado. Pressionando Escape.")  
-                await page.keyboard.press("Escape")  
+async def main():
+    ensure_download_dir()
+
+    async with async_playwright() as p:
+        # ✅ CORREÇÃO: Usando a inicialização do script que funciona
+        browser = await p.chromium.launch(
+            headless=False,  # <--- IMPORTANTE: Teste primeiro com False!
+            args=[
+                "--no-sandbox",
+                "--disable-dev-shm-usage"
+            ]
+        )
+        context = await browser.new_context(
+            accept_downloads=True,
+            viewport={"width": 1920, "height": 1080} # Define o viewport aqui
+        )
+        page = await context.new_page()
+
+        # 🔍 DEBUG: Captura logs do console (JS)
+        page.on("console", lambda msg: print(f"📄 Console: {msg.text}"))
+
+        try:
+            # 1. LOGIN (usando a sintaxe .locator, que é mais moderna)
+            print("🔐 Acessando página de login...")
+            await page.goto(LOGIN_URL, timeout=30000)
+            
+            # Espera o campo Ops ID estar visível antes de preencher
+            ops_id_field = page.locator('xpath=//*[@placeholder="Ops ID"]')
+            await ops_id_field.wait_for(state="visible", timeout=15000)
+
+            await ops_id_field.fill(LOGIN_DATA["ops_id"])
+            await page.locator('xpath=//*[@placeholder="Senha"]').fill(LOGIN_DATA["password"])
+            await page.locator('xpath=/html/body/div[1]/div/div[2]/div/div/div[1]/div[3]/form/div/div/button').click()
+            
+            # Espere por uma navegação ou um elemento da página principal, é mais confiável que tempo fixo
+            print("Aguardando login ser processado...")
+            await page.wait_for_load_state("networkidle", timeout=30000) 
+            print("✅ Login realizado com sucesso!")
+
+            # O resto do seu código continua aqui...
+            try:
+                await page.locator('.ssc-dialog-close').click(timeout=5000)
+            except:
+                print("💡 Nenhum pop-up encontrado. Pressionando Escape.")
+                await page.keyboard.press("Escape")
   
             # 2. DOWNLOAD 1: Base Pending  
             print("📥 Baixando 'Base Pending'...")  
