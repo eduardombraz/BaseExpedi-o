@@ -132,7 +132,6 @@ async def main():
             await page.click('xpath=/html/body/div[1]/div/div[2]/div/div/div[1]/div[3]/form/div/div/button')  
             await page.wait_for_timeout(15000)  
   
-            # Fecha pop-up, se aparecer  
             try:  
                 await page.locator('.ssc-dialog-close').click(timeout=5000)  
             except:  
@@ -142,7 +141,7 @@ async def main():
             # 2. DOWNLOAD 1: Base Pending  
             print("📥 Baixando 'Base Pending'...")  
             await page.goto(EXPORT_URL, timeout=20000)  
-            await page.wait_for_load_state("networkidle")  # Espera carregamento completo  
+            await page.wait_for_load_state("networkidle")  
             await page.wait_for_timeout(8000)  
   
             # Clica no botão Exportar  
@@ -154,13 +153,18 @@ async def main():
             await page.wait_for_load_state("networkidle")  
             await page.wait_for_timeout(8000)  
   
-            # Espera o download  
+            # ✅ Clique FORÇADO via JavaScript (burla o React)  
             async with page.expect_download() as download_info:  
-                # ✅ FORÇA O CLIQUE com force=True  
-                await page.get_by_role("button", name="Baixar").nth(0).click(  
-                    timeout=30000,  
-                    force=True  # 👈 Chave: Força o clique mesmo se bloqueado  
-                )  
+                await page.evaluate("""() => {  
+                    const button = document.querySelector('button[title="Baixar"]');  
+                    if (button) {  
+                        button.click();  
+                        console.log('✅ Botão "Baixar" clicado via JavaScript');  
+                    } else {  
+                        console.error('❌ Botão "Baixar" não encontrado no DOM');  
+                    }  
+                }""")  
+  
             download = await download_info.value  
             download_path = os.path.join(DOWNLOAD_DIR, download.suggested_filename)  
             await download.save_as(download_path)  
@@ -190,12 +194,18 @@ async def main():
             await page.wait_for_load_state("networkidle")  
             await page.wait_for_timeout(8000)  
   
-            # Espera o download  
+            # ✅ Clique FORÇADO via JavaScript (burla o React)  
             async with page.expect_download() as download_info:  
-                await page.get_by_role("button", name="Baixar").nth(0).click(  
-                    timeout=30000,  
-                    force=True  # 👈 Chave: Força o clique  
-                )  
+                await page.evaluate("""() => {  
+                    const button = document.querySelector('button[title="Baixar"]');  
+                    if (button) {  
+                        button.click();  
+                        console.log('✅ Botão "Baixar" clicado via JavaScript');  
+                    } else {  
+                        console.error('❌ Botão "Baixar" não encontrado no DOM');  
+                    }  
+                }""")  
+  
             download2 = await download_info.value  
             download_path2 = os.path.join(DOWNLOAD_DIR, download2.suggested_filename)  
             await download2.save_as(download_path2)  
