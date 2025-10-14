@@ -38,7 +38,7 @@ def rename_downloaded_file2(download_dir, download_path2):
             os.remove(new_file_path2)
         shutil.move(download_path2, new_file_path2)
         print(f"Arquivo salvo como: {new_file_path2}")
-        return new_file_path
+        return new_file_path2
     except Exception as e:
         print(f"Erro ao renomear o arquivo: {e}")
         return None
