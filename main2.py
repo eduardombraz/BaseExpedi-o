@@ -153,7 +153,7 @@ async def main():
             await page.wait_for_timeout(20000)
 
             await page.goto("https://spx.shopee.com.br/#/taskCenter/exportTaskCenter")
-            await page.wait_for_timeout(20000)
+            await page.wait_for_timeout(30000)
 
             async with page.expect_download() as download_info2: # Use uma nova variável para clareza
                 # Clica no botão mais recente, que deve ser o da segunda exportação
