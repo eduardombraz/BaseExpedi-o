@@ -127,7 +127,7 @@ async def main():
 
             await page.goto("https://spx.shopee.com.br/#/taskCenter/exportTaskCenter")
             # Use a lógica de espera robusta que discutimos anteriormente aqui!
-            await page.wait_for_timeout(8000)
+            await page.wait_for_timeout(12000)
             
             async with page.expect_download() as download_info:
                 await page.get_by_role("button", name="Baixar").nth(0).click()
